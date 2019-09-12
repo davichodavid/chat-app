@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
-
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
-    margin: '50px'
+    margin: '50px auto 0',
+    maxWidth: '1000px'
   },
   flex: {
     display: 'flex',
@@ -32,12 +35,18 @@ const useStyles = makeStyles(theme => ({
     width: '85%'
   },
   button: {
-    width: '15%'
+    // width: '15%'
+    backgroundColor: 'coral'
+  },
+  rightIcon: {
+    marginLeft: theme.spacing(1)
   }
 }));
 
 const Dashboard = () => {
   const classes = useStyles();
+
+  const [textValue, setTextValue] = useState('');
 
   return (
     <Paper className={classes.root}>
@@ -63,12 +72,32 @@ const Dashboard = () => {
           {[{ from: 'user', msg: 'Hello user' }].map((chat, index) => (
             <div className={classes.flex} key={index}>
               <Chip label={chat.from} className={classes.chip} />
-              <Typography variant='p'>{chat.msg}</Typography>
+              <Typography>{chat.msg}</Typography>
             </div>
           ))}
         </div>
       </div>
-      <div className={classes.flex}></div>
+      <div className={classes.flex}>
+        <TextField
+          className={classes.chatbox}
+          label='Message'
+          style={{ margin: 8 }}
+          fullWidth
+          margin='normal'
+          variant='outlined'
+          InputLabelProps={{
+            shrink: true
+          }}
+          value={textValue}
+          onChange={e => {
+            setTextValue(e.target.value);
+          }}
+        />
+        <Button variant='contained' color='primary' className={classes.button}>
+          Send
+          <Icon className={classes.rightIcon}>send</Icon>
+        </Button>
+      </div>
     </Paper>
   );
 };
