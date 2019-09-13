@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import TextField from '@material-ui/core/TextField';
 
+import { CTX } from '../Store';
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
@@ -46,7 +48,14 @@ const useStyles = makeStyles(theme => ({
 const Dashboard = () => {
   const classes = useStyles();
 
+  /**************** Context Store **************/
+  const { allChats, sendChatActions, user } = React.useContext(CTX);
+  console.log(allChats);
+
+  const topics = Object.keys(allChats);
+
   const [textValue, setTextValue] = useState('');
+  const [activeTopic, setActiveTopic] = useState(topics[0]);
 
   return (
     <Paper className={classes.root}>
@@ -54,14 +63,17 @@ const Dashboard = () => {
         Chat App
       </Typography>
       <Typography variant='h5' component='h5'>
-        Topic Placeholder
+        {activeTopic}
       </Typography>
       <div className={classes.flex}>
         {/********************* Topics Window *******************/}
         <div className={classes.topicsWindow}>
           <List>
-            {['topic'].map(topic => (
-              <ListItem key={topic} button>
+            {topics.map(topic => (
+              <ListItem
+                onClick={e => setActiveTopic(e.target.innerText)}
+                key={topic}
+                button>
                 <ListItemText primary={topic} />
               </ListItem>
             ))}
@@ -69,7 +81,7 @@ const Dashboard = () => {
         </div>
         {/********************* Chat Window *******************/}
         <div className={classes.chatWindow}>
-          {[{ from: 'user', msg: 'Hello user' }].map((chat, index) => (
+          {allChats[activeTopic].map((chat, index) => (
             <div className={classes.flex} key={index}>
               <Chip label={chat.from} className={classes.chip} />
               <Typography>{chat.msg}</Typography>
@@ -93,7 +105,14 @@ const Dashboard = () => {
             setTextValue(e.target.value);
           }}
         />
-        <Button variant='contained' color='primary' className={classes.button}>
+        <Button
+          variant='contained'
+          color='primary'
+          className={classes.button}
+          onClick={() => {
+            sendChatActions({ from: user, msg: textValue, topic: activeTopic });
+            setTextValue('');
+          }}>
           Send
           <Icon className={classes.rightIcon}>send</Icon>
         </Button>
